@@ -31,7 +31,7 @@ class _GlucoseDashboardState extends State<GlucoseDashboard> {
 
   // Updated method name using HTTP to fetch data from the API
   Future<List<GlucoseDataPoint>> fetchDataFromAPI() async {
-    var url = Uri.parse('http://192.168.2.21:8080/api/glucose?glucoseLevel');
+    var url = Uri.parse('http://192.168.2.21:8080/api/glucose/current?patientId=1');
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
@@ -45,7 +45,7 @@ class _GlucoseDashboardState extends State<GlucoseDashboard> {
         );
 
       }).toList();
-      print('Hello, world!');
+
 
     } else {
       throw Exception('Failed to fetch glucose data');
