@@ -1,0 +1,30 @@
+name: front
+description: "A new Flutter project."
+
+publish_to: 'none' # Empêche la publication accidentelle sur pub.dev
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.3.4 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  fl_chart: ^0.36.0
+  http: ^0.13.6
+  mysql1: ^0.19.0
+  cupertino_icons: ^1.0.6
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+  - lib/assets/doctors.PNG
+  - lib/assets/mobile.jpg
+  - lib/assets/Patient.PNG
