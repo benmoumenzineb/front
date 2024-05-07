@@ -1,9 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:front/GlucoseDashboard.dart';
 import 'package:front/signuppatient.dart';
 
-class LoginPage2 extends StatelessWidget {
+class LoginPage2 extends StatefulWidget {
+  @override
+  _LoginPage2State createState() => _LoginPage2State();
+}
+
+class _LoginPage2State extends State<LoginPage2> {
+  final userIdController = TextEditingController();
+  final passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    userIdController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,50 +36,58 @@ class LoginPage2 extends StatelessWidget {
             color: Colors.black,
           ),
         ),
-        systemOverlayStyle: SystemUiOverlayStyle.dark,
       ),
       body: SingleChildScrollView(
-        child: Container(
+        child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 40),
-          height: MediaQuery.of(context).size.height,
-          width: double.infinity,
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              Column(
-                children: <Widget>[
-                  Text(
-                    "Patient",
-                    style: TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                  Container(
-                    height: MediaQuery.of(context).size.height / 3,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage("lib/assets/Patient.png"),
+              SizedBox(height: 20),
+              Center(
+                child: Column(
+                  children: <Widget>[
+                    Text(
+                      "Patient",
+                      style: TextStyle(
+                        fontSize: 30,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                  ),
-                ],
+                    SizedBox(height: 20),
+                    Container(
+                      height: MediaQuery.of(context).size.height / 3,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage("lib/assets/Patient.png"),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
               SizedBox(height: 20),
-              inputFile(label: "ID"),
+              inputFile(label: "ID", controller: userIdController),
               SizedBox(height: 10),
-              inputFile(label: "Mot de passe", obscureText: true),
+              inputFile(label: "Mot de passe", controller: passwordController, obscureText: true),
               SizedBox(height: 20),
               Container(
                 width: MediaQuery.of(context).size.width,
                 child: MaterialButton(
                   onPressed: () {
-                    // Naviguer vers le tableau de bord lorsque le bouton est cliqué
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) =>GlucoseDashboard()),
-                    );
+                    var userId = userIdController.text;
+                    var password = passwordController.text;
+
+                    if (userId.isEmpty || password.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Veuillez remplir tous les champs')),
+                      );
+                    } else {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => GlucoseDashboard()),
+                      );
+                    }
                   },
                   color: Color(0xff0095FF),
                   padding: EdgeInsets.symmetric(vertical: 15),
@@ -109,6 +131,7 @@ class LoginPage2 extends StatelessWidget {
                   ),
                 ],
               ),
+              SizedBox(height: 20),
             ],
           ),
         ),
@@ -117,9 +140,7 @@ class LoginPage2 extends StatelessWidget {
   }
 }
 
-
-// Fonction inputFile déplacée à l'intérieur de la classe LoginPage
-Widget inputFile({label, obscureText = false}) {
+Widget inputFile({required String label, TextEditingController? controller, bool obscureText = false}) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: <Widget>[
@@ -133,6 +154,7 @@ Widget inputFile({label, obscureText = false}) {
       ),
       SizedBox(height: 5),
       TextField(
+        controller: controller,
         obscureText: obscureText,
         decoration: InputDecoration(
           contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),

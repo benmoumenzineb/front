@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:front/login.dart';
+
+
 class SignupPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -13,10 +16,13 @@ class SignupPage extends StatelessWidget {
           onPressed: () {
             Navigator.pop(context);
           },
-          icon: Icon(Icons.arrow_back_ios,
+          icon: Icon(
+            Icons.arrow_back_ios,
             size: 20,
-            color: Colors.black,),
-        ), systemOverlayStyle: SystemUiOverlayStyle.dark,
+            color: Colors.black,
+          ),
+        ),
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -28,109 +34,92 @@ class SignupPage extends StatelessWidget {
             children: <Widget>[
               Column(
                 children: <Widget>[
-                  Text("Médecin",
+                  Text(
+                    "Médecin",
                     style: TextStyle(
                       fontSize: 30,
                       fontWeight: FontWeight.bold,
-
-                    ),),
-                  SizedBox(height: 20,),
+                    ),
+                  ),
+                  SizedBox(height: 20),
                 ],
               ),
               Column(
                 children: <Widget>[
                   inputFile(label: "Nom"),
                   inputFile(label: "Prénom"),
-                  inputFile(label: "Numéro de téléphone", obscureText: true),
-                  inputFile(label: " Mot de passe", obscureText: true),
+                  inputFile(label: "Numéro de téléphone"),
+                  inputFile(label: "Mot de passe", obscureText: true),
                 ],
               ),
               Container(
                 padding: EdgeInsets.only(top: 3, left: 3),
-                decoration:
-                BoxDecoration(
-                    borderRadius: BorderRadius.circular(50),
-                    border: Border(
-                      bottom: BorderSide(color: Colors.black),
-                      top: BorderSide(color: Colors.black),
-                      left: BorderSide(color: Colors.black),
-                      right: BorderSide(color: Colors.black),
-
-
-
-                    )
-
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(50),
+                  border: Border(
+                    bottom: BorderSide(color: Colors.black),
+                    top: BorderSide(color: Colors.black),
+                    left: BorderSide(color: Colors.black),
+                    right: BorderSide(color: Colors.black),
+                  ),
                 ),
                 child: MaterialButton(
                   minWidth: double.infinity,
                   height: 60,
-                  onPressed: () {},
+                  onPressed: () {
+                    // Naviguer vers la page de connexion lorsqu'on clique sur "S'inscrire"
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => LoginPage()), // Navigation vers la page de connexion
+                    );
+                  },
                   color: Color(0xff0095FF),
                   elevation: 0,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(50),
-
                   ),
                   child: Text(
-                    "S'inscrire", style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 18,
-                    color: Colors.white,
-
+                    "S'inscrire",
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 18,
+                      color: Colors.white,
+                    ),
                   ),
-                  ),
-
                 ),
-
               ),
             ],
-
           ),
-
-
         ),
-
       ),
-
     );
   }
 }
 
-
-
-// we will be creating a widget for text field
-Widget inputFile({label, obscureText = false})
-{
+Widget inputFile({required String label, bool obscureText = false}) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: <Widget>[
       Text(
         label,
         style: TextStyle(
-            fontSize: 15,
-            fontWeight: FontWeight.w400,
-            color:Colors.black87
+          fontSize: 15,
+          fontWeight: FontWeight.w400,
+          color: Colors.black87,
         ),
-
       ),
-      SizedBox(
-        height: 5,
-      ),
+      SizedBox(height: 5),
       TextField(
         obscureText: obscureText,
         decoration: InputDecoration(
-            contentPadding: EdgeInsets.symmetric(vertical: 0,
-                horizontal: 10),
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(
-              ),
-
-            ),
-            border: OutlineInputBorder(
-            )
+          contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(),
+          ),
+          border: OutlineInputBorder(),
         ),
       ),
-      SizedBox(height: 10,)
+      SizedBox(height: 10),
     ],
   );
 }

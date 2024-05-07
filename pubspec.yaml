@@ -15,6 +15,8 @@ dependencies:
   http: ^0.13.6
   mysql1: ^0.19.0
   cupertino_icons: ^1.0.6
+  url_launcher: ^6.1.11  # Utilisé pour ouvrir des liens externes
+  share_plus: ^6.3.1
 
 dev_dependencies:
   flutter_test:
@@ -28,3 +30,8 @@ flutter:
   - lib/assets/doctors.PNG
   - lib/assets/mobile.jpg
   - lib/assets/Patient.PNG
+  - lib/assets/Profile.PNG
+  - lib/assets/facebook.png
+  - lib/assets/instagram.png
+  - lib/assets/whatsapp.jpg
+  - lib/assets/compte.jpeg
