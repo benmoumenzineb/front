@@ -4,11 +4,17 @@ import 'package:url_launcher/url_launcher.dart';
 void main() {
   runApp(MyApp());
 }
-
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        textTheme: TextTheme(
+          headline6: TextStyle(fontWeight: FontWeight.bold),
+          bodyText2: TextStyle(color: Colors.black),
+        ),
+      ),
       home: SocialMediaPage(),
     );
   }
@@ -17,7 +23,7 @@ class MyApp extends StatelessWidget {
 class SocialMediaPage extends StatelessWidget {
   final String facebookUrl = "https://www.facebook.com/yourprofile";
   final String instagramUrl = "https://www.instagram.com/yourprofile";
-  final String whatsappUrl = "https://wa.me/1234567890"; // Numéro WhatsApp
+  final String whatsappUrl = "https://wa.me/1234567890";
 
   void _launchURL(String url) async {
     if (await canLaunch(url)) {
@@ -33,35 +39,71 @@ class SocialMediaPage extends StatelessWidget {
       appBar: AppBar(
         title: Text("Partage sur les réseaux sociaux"),
       ),
-      body: Center(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            GestureDetector(
-              onTap: () => _launchURL(facebookUrl),
-              child: Image.asset(
-                'lib/assets/facebook.png',
-                width: 32,
-                height: 32,
+            Text(
+              "partagez vos mesures sur les réseaux sociaux!",
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 20),
+            Expanded(
+              child: GridView.count(
+                crossAxisCount: 3,
+                mainAxisSpacing: 20, // Espacement entre les lignes
+                crossAxisSpacing: 20, // Espacement entre les colonnes
+                children: [
+                  _socialMediaCard(
+                    context,
+                    'lib/assets/facebook.png',
+                    'Facebook',
+                        () => _launchURL(facebookUrl),
+                  ),
+                  _socialMediaCard(
+                    context,
+                    'lib/assets/instagram.png',
+                    'Instagram',
+                        () => _launchURL(instagramUrl),
+                  ),
+                  _socialMediaCard(
+                    context,
+                    'lib/assets/whatsapp.jpg',
+                    'WhatsApp',
+                        () => _launchURL(whatsappUrl),
+                  ),
+                ],
               ),
             ),
-            SizedBox(width: 20), // Espace entre les icônes
-            GestureDetector(
-              onTap: () => _launchURL(instagramUrl),
-              child: Image.asset(
-                'lib/assets/instagram.png',
-                width: 32,
-                height: 32,
-              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _socialMediaCard(BuildContext context, String assetPath, String label, VoidCallback onTap) {
+    return Card(
+      elevation: 5,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: InkWell(
+        onTap: onTap,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Image.asset(
+              assetPath,
+              width: 40,
+              height: 40,
             ),
-            SizedBox(width: 20), // Espace entre les icônes
-            GestureDetector(
-              onTap: () => _launchURL(whatsappUrl),
-              child: Image.asset(
-                'lib/assets/whatsapp.jpg',
-                width: 32,
-                height: 32,
-              ),
+            SizedBox(height: 10),
+            Text(
+              label,
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
           ],
         ),

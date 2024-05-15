@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import 'package:flutter/services.dart';
-import 'package:front/ProfilePage.dart';
-import 'package:front/signup.dart';
+import 'ProfilePage.dart';
+import 'signup.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -9,16 +11,62 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  // Controllers to manage text field inputs
+  // Controllers pour gérer les saisies de champ de texte
   final nameController = TextEditingController();
   final passwordController = TextEditingController();
 
   @override
   void dispose() {
-    // Dispose of controllers when no longer needed
+    // Libérer les contrôleurs lorsqu'ils ne sont plus nécessaires
     nameController.dispose();
     passwordController.dispose();
     super.dispose();
+  }
+
+  Future<void> login() async {
+    var name = nameController.text;
+    var password = passwordController.text;
+
+    if (name.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Veuillez remplir tous les champs')),
+      );
+      return;
+    }
+
+    var url = Uri.parse('http://localhost:8080/api/doctors/checkLogin');
+    var response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode({
+        'nom': name,
+        'motDePasse': password,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      var data = json.decode(response.body);
+      if (data['exists']) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Bienvenue!")),
+        );
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => ProfilePage()),
+        );
+      }
+    } else if (response.statusCode == 401) {
+      var data = json.decode(response.body);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(data['message'])),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Erreur du serveur. Veuillez réessayer plus tard.")),
+      );
+    }
   }
 
   @override
@@ -41,21 +89,21 @@ class _LoginPageState extends State<LoginPage> {
         ),
         systemOverlayStyle: SystemUiOverlayStyle.dark,
       ),
-      body: SingleChildScrollView( // Allows vertical scrolling
+      body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 40),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              SizedBox(height: 20), // Add space at the beginning
-              Center( // Center content
+              SizedBox(height: 20),
+              Center(
                 child: Column(
                   children: <Widget>[
                     Text(
                       "Médecin",
                       style: TextStyle(
                         fontSize: 30,
-                        fontWeight: FontWeight.bold, // Correct assignment
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                     SizedBox(height: 20),
@@ -70,37 +118,22 @@ class _LoginPageState extends State<LoginPage> {
                   ],
                 ),
               ),
-              SizedBox(height: 20), // Space between elements
+              SizedBox(height: 20),
               inputFile(
                 label: "Nom",
-                controller: nameController, // Assign controller
+                controller: nameController,
               ),
               SizedBox(height: 10),
               inputFile(
                 label: "Mot de passe",
-                controller: passwordController, // Assign controller
-                obscureText: true, // For password field
+                controller: passwordController,
+                obscureText: true,
               ),
               SizedBox(height: 20),
               Container(
                 width: MediaQuery.of(context).size.width,
                 child: MaterialButton(
-                  onPressed: () {
-                    var name = nameController.text; // Get text from input
-                    var password = passwordController.text; // Get text from input
-
-                    // Validation logic
-                    if (name.isEmpty || password.isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Veuillez remplir tous les champs')), // Display error message
-                      );
-                    } else {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => ProfilePage()), // Navigate to ProfilePage
-                      );
-                    }
-                  },
+                  onPressed: login,
                   color: Color(0xff0095FF),
                   padding: EdgeInsets.symmetric(vertical: 15),
                   shape: RoundedRectangleBorder(
@@ -111,12 +144,12 @@ class _LoginPageState extends State<LoginPage> {
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 18,
-                      fontWeight: FontWeight.bold, // Correct assignment
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
               ),
-              SizedBox(height: 20), // Space after button
+              SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
@@ -129,7 +162,7 @@ class _LoginPageState extends State<LoginPage> {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => SignupPage()), // Navigate to signup page
+                        MaterialPageRoute(builder: (context) => SignupPage()),
                       );
                     },
                     child: Text(
@@ -137,13 +170,13 @@ class _LoginPageState extends State<LoginPage> {
                       style: TextStyle(
                         color: Color(0xff0095FF),
                         fontSize: 16,
-                        fontWeight: FontWeight.bold, // Correct assignment
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
                 ],
               ),
-              SizedBox(height: 20), // Final spacing to avoid overflow
+              SizedBox(height: 20),
             ],
           ),
         ),
@@ -166,8 +199,8 @@ Widget inputFile({required String label, TextEditingController? controller, bool
       ),
       SizedBox(height: 5),
       TextField(
-        controller: controller, // Use the passed controller
-        obscureText: obscureText, // Set to true for password fields
+        controller: controller,
+        obscureText: obscureText,
         decoration: InputDecoration(
           contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
           border: OutlineInputBorder(

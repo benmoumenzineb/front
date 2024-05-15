@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:front/MesureHebdomadaire.dart';
+import 'package:front/main.dart';
 import 'package:front/parametre.dart';
 import 'package:front/partager.dart';
+import 'package:front/ComptePatient.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:fl_chart/fl_chart.dart';
@@ -37,7 +40,7 @@ class _GlucoseDashboardState extends State<GlucoseDashboard> {
   }
 
   Future<List<GlucoseDataPoint>> fetchDataFromAPI() async {
-    var url = Uri.parse('http://192.168.2.31:8080/api/glucose/history?patientId=1');
+    var url = Uri.parse('http://192.168.2.20:8080/api/glucose/history?patientId=1');
 
     final response = await http.get(url);
 
@@ -78,11 +81,13 @@ class _GlucoseDashboardState extends State<GlucoseDashboard> {
             onSelected: (item) {
               switch (item) {
                 case 0:
-                // Action pour le tableau de bord hebdomadaire
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => MesureHebdomadaire()),
+                  );
                   break;
                 case 1:
-                // Action pour les paramètres
-                // Naviguer vers l'écran Partager lorsqu'on clique sur "Partager"
+                // Naviguer vers les paramètres
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => ParametresPage()),
@@ -92,10 +97,23 @@ class _GlucoseDashboardState extends State<GlucoseDashboard> {
                 // Action pour les suggestions
                   break;
                 case 3:
-                // Naviguer vers l'écran Partager lorsqu'on clique sur "Partager"
+                // Naviguer vers la page des réseaux sociaux
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => SocialMediaPage()),
+                  );
+                  break;
+                case 4:
+                // Naviguer vers la page de profil
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ComptePatient()),
+                  );
+                  break;
+                case 5:
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => HomePage()),
                   );
                   break;
               }
@@ -139,6 +157,26 @@ class _GlucoseDashboardState extends State<GlucoseDashboard> {
                     Icon(Icons.share),
                     SizedBox(width: 10),
                     Text("Partager"),
+                  ],
+                ),
+              ),
+              PopupMenuItem<int>(
+                value: 4,
+                child: Row(
+                  children: [
+                    Icon(Icons.person),
+                    SizedBox(width: 10),
+                    Text("Profil"),
+                  ],
+                ),
+              ),
+              PopupMenuItem<int>(
+                value: 5,
+                child: Row(
+                  children: [
+                    Icon(Icons.exit_to_app),
+                    SizedBox(width: 10),
+                    Text("Déconnexion"),
                   ],
                 ),
               ),
@@ -238,3 +276,5 @@ class _GlucoseDashboardState extends State<GlucoseDashboard> {
     );
   }
 }
+
+

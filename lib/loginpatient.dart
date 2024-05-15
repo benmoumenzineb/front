@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
 import 'package:front/GlucoseDashboard.dart';
 import 'package:front/signuppatient.dart';
 
@@ -16,6 +19,52 @@ class _LoginPage2State extends State<LoginPage2> {
     userIdController.dispose();
     passwordController.dispose();
     super.dispose();
+  }
+
+  Future<void> login() async {
+    var userId = userIdController.text;
+    var password = passwordController.text;
+
+    if (userId.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Veuillez remplir tous les champs')),
+      );
+      return;
+    }
+
+    var url = Uri.parse('http://localhost:8080/api/patients/checkLogin');
+    var response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode({
+        'idPatient': userId,
+        'motDePasse': password,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      var data = json.decode(response.body);
+      if (data['exists']) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(data['message'])),
+        );
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => GlucoseDashboard()),
+        );
+      }
+    } else if (response.statusCode == 401) {
+      var data = json.decode(response.body);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(data['message'])),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Erreur du serveur. Veuillez réessayer plus tard.")),
+      );
+    }
   }
 
   @override
@@ -74,21 +123,7 @@ class _LoginPage2State extends State<LoginPage2> {
               Container(
                 width: MediaQuery.of(context).size.width,
                 child: MaterialButton(
-                  onPressed: () {
-                    var userId = userIdController.text;
-                    var password = passwordController.text;
-
-                    if (userId.isEmpty || password.isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Veuillez remplir tous les champs')),
-                      );
-                    } else {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => GlucoseDashboard()),
-                      );
-                    }
-                  },
+                  onPressed: login,
                   color: Color(0xff0095FF),
                   padding: EdgeInsets.symmetric(vertical: 15),
                   shape: RoundedRectangleBorder(
