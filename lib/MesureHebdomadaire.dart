@@ -7,7 +7,6 @@ import 'package:fl_chart/fl_chart.dart';
 class GlucoseDataPoint {
   final DateTime dateTime;
   final double glucoseLevel;
-
   GlucoseDataPoint(this.dateTime, this.glucoseLevel);
 }
 
@@ -38,7 +37,7 @@ class _MesureHebdomadaireState extends State<MesureHebdomadaire> {
     });
 
     try {
-      var url = Uri.parse('http://192.168.2.20:8080/api/glucose/history?patientId=1'); // Modifiez avec l'URL de votre API
+      var url = Uri.parse('http://localhost:8080/api/glucose/history?patientId=1'); // Modifiez avec l'URL de votre API
       final response = await http.get(url);
 
       if (response.statusCode == 200) {

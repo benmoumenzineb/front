@@ -6,6 +6,10 @@ import 'package:front/parametre.dart';
 import 'package:front/patients.dart';
 
 class ProfilePage extends StatelessWidget {
+  final String? token; // Ajout du paramètre token dans le constructeur
+
+  ProfilePage({Key? key, this.token}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -80,7 +84,7 @@ class ProfilePage extends StatelessWidget {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) =>PatientsPage()),
+                    MaterialPageRoute(builder: (context) => PatientsPage()),
                   );
                 },
                 icon: Icon(Icons.people),

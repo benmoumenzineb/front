@@ -11,13 +11,11 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  // Controllers pour gérer les saisies de champ de texte
   final nameController = TextEditingController();
   final passwordController = TextEditingController();
 
   @override
   void dispose() {
-    // Libérer les contrôleurs lorsqu'ils ne sont plus nécessaires
     nameController.dispose();
     passwordController.dispose();
     super.dispose();
@@ -49,12 +47,15 @@ class _LoginPageState extends State<LoginPage> {
     if (response.statusCode == 200) {
       var data = json.decode(response.body);
       if (data['exists']) {
+        var token = data['token'];
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Bienvenue!")),
         );
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => ProfilePage()),
+          MaterialPageRoute(
+            builder: (context) => ProfilePage(token: token),
+          ),
         );
       }
     } else if (response.statusCode == 401) {

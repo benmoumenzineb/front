@@ -7,26 +7,20 @@ import 'package:front/ComptePatient.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:fl_chart/fl_chart.dart';
-
-
 class GlucoseDataPoint {
   final DateTime dateTime;
   final double glucoseLevel;
 
   GlucoseDataPoint(this.dateTime, this.glucoseLevel);
 }
-
 class GlucoseDashboard extends StatefulWidget {
   const GlucoseDashboard({Key? key}) : super(key: key);
-
   @override
   _GlucoseDashboardState createState() => _GlucoseDashboardState();
 }
-
 class _GlucoseDashboardState extends State<GlucoseDashboard> {
   List<GlucoseDataPoint> glucoseData = [];
   bool showDetails = false;
-
   @override
   void initState() {
     super.initState();
@@ -38,12 +32,9 @@ class _GlucoseDashboardState extends State<GlucoseDashboard> {
       print("Erreur lors de la récupération des données de glucose: $error");
     });
   }
-
   Future<List<GlucoseDataPoint>> fetchDataFromAPI() async {
-    var url = Uri.parse('http://192.168.2.20:8080/api/glucose/history?patientId=1');
-
+    var url = Uri.parse('http://localhost:8080/api/current?patientId=1');
     final response = await http.get(url);
-
     if (response.statusCode == 200) {
       var jsonResponse = jsonDecode(response.body);
       if (jsonResponse is List) {
@@ -60,7 +51,6 @@ class _GlucoseDashboardState extends State<GlucoseDashboard> {
       throw Exception("Failed to fetch glucose data");
     }
   }
-
   Color getColorForGlucoseLevel(double glucoseLevel) {
     if (glucoseLevel > 1.10) {
       return Colors.red;
@@ -120,7 +110,7 @@ class _GlucoseDashboardState extends State<GlucoseDashboard> {
             },
             icon: Icon(Icons.dehaze),
             itemBuilder: (context) => [
-              PopupMenuItem<int>(
+              const PopupMenuItem<int>(
                 value: 0,
                 child: Row(
                   children: [
@@ -130,7 +120,7 @@ class _GlucoseDashboardState extends State<GlucoseDashboard> {
                   ],
                 ),
               ),
-              PopupMenuItem<int>(
+              const PopupMenuItem<int>(
                 value: 1,
                 child: Row(
                   children: [
@@ -140,7 +130,7 @@ class _GlucoseDashboardState extends State<GlucoseDashboard> {
                   ],
                 ),
               ),
-              PopupMenuItem<int>(
+              const PopupMenuItem<int>(
                 value: 2,
                 child: Row(
                   children: [
@@ -150,7 +140,7 @@ class _GlucoseDashboardState extends State<GlucoseDashboard> {
                   ],
                 ),
               ),
-              PopupMenuItem<int>(
+              const PopupMenuItem<int>(
                 value: 3,
                 child: Row(
                   children: [
@@ -160,7 +150,7 @@ class _GlucoseDashboardState extends State<GlucoseDashboard> {
                   ],
                 ),
               ),
-              PopupMenuItem<int>(
+              const PopupMenuItem<int>(
                 value: 4,
                 child: Row(
                   children: [
@@ -170,7 +160,7 @@ class _GlucoseDashboardState extends State<GlucoseDashboard> {
                   ],
                 ),
               ),
-              PopupMenuItem<int>(
+              const PopupMenuItem<int>(
                 value: 5,
                 child: Row(
                   children: [
@@ -189,7 +179,7 @@ class _GlucoseDashboardState extends State<GlucoseDashboard> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(
+            const Text(
               "Mesures de glycémie en temps réel",
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
@@ -235,7 +225,7 @@ class _GlucoseDashboardState extends State<GlucoseDashboard> {
               )
                   : Center(child: Text("Pas de données disponibles")),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
                 setState(() {

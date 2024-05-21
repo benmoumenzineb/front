@@ -4,8 +4,6 @@ import 'package:front/login.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-
-
 class SignupPage extends StatefulWidget {
   @override
   _SignupPageState createState() => _SignupPageState();
@@ -19,6 +17,7 @@ class _SignupPageState extends State<SignupPage> {
   TextEditingController telephoneController = TextEditingController();
   TextEditingController motDePasseController = TextEditingController();
   TextEditingController confirmMotDePasseController = TextEditingController();
+  TextEditingController roleController = TextEditingController();
 
   bool _isObscure = true;
   bool _isConfirmObscure = true;
@@ -30,11 +29,12 @@ class _SignupPageState extends State<SignupPage> {
     telephoneController.dispose();
     motDePasseController.dispose();
     confirmMotDePasseController.dispose();
+    roleController.dispose();
     super.dispose();
   }
 
-  Future<void> registerDoctor(String nom, String prenom, String telephone, String motDePasse) async {
-    final url = 'http://192.168.2.20:8080/api/doctors';
+  Future<void> registerDoctor(String nom, String prenom, String telephone, String motDePasse, String role) async {
+    final url = 'http://localhost:8080/api/doctors';
     final response = await http.post(
       Uri.parse(url),
       headers: <String, String>{
@@ -45,6 +45,7 @@ class _SignupPageState extends State<SignupPage> {
         'prenom': prenom,
         'telephone': telephone,
         'motDePasse': motDePasse,
+        'role': role,
       }),
     );
 
@@ -79,6 +80,7 @@ class _SignupPageState extends State<SignupPage> {
         prenomController.text,
         telephoneController.text,
         motDePasseController.text,
+        roleController.text,
       );
     }
   }
@@ -215,6 +217,29 @@ class _SignupPageState extends State<SignupPage> {
                         return null;
                       },
                     ),
+                    DropdownButtonFormField<String>(
+                      value: "Médecin", // Default value
+                      decoration: InputDecoration(
+                        labelText: 'Rôle',
+                      ),
+                      items: <String>['Médecin', 'Infirmier'].map((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                      onChanged: (newValue) {
+                        setState(() {
+                          roleController.text = newValue!;
+                        });
+                      },
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Veuillez sélectionner un rôle.";
+                        }
+                        return null;
+                      },
+                    ),
                   ],
                 ),
                 Container(
@@ -239,8 +264,6 @@ class _SignupPageState extends State<SignupPage> {
                     ),
                     child: Text(
                       "S'inscrire",
-
-
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
                         fontSize: 18,

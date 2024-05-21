@@ -15,9 +15,8 @@ class _SignupPage2State extends State<SignupPage2> {
   final telephoneController = TextEditingController();
   final motDePasseController = TextEditingController();
   final confirmMotDePasseController = TextEditingController();
-
+  final nomDocteurController = TextEditingController();
   bool _motDePasseObscured = true;
-
   // État d'erreur pour chaque champ
   bool _patientIdError = false;
   bool _nomError = false;
@@ -25,7 +24,7 @@ class _SignupPage2State extends State<SignupPage2> {
   bool _telephoneError = false;
   bool _motDePasseError = false;
   bool _confirmMotDePasseError = false;
-
+  bool _nomDocteurError = false;
   void _toggleMotDePasseVisibility() {
     setState(() {
       _motDePasseObscured = !_motDePasseObscured;
@@ -41,10 +40,11 @@ class _SignupPage2State extends State<SignupPage2> {
       _telephoneError = telephoneController.text.trim().isEmpty;
       _motDePasseError = motDePasseController.text.trim().isEmpty;
       _confirmMotDePasseError = confirmMotDePasseController.text.trim().isEmpty;
+      _nomDocteurError = nomDocteurController.text.trim().isEmpty;
     });
 
     // Vérification s'il y a des erreurs de champ
-    if ([_patientIdError, _nomError, _prenomError, _telephoneError, _motDePasseError, _confirmMotDePasseError].contains(true)) {
+    if ([_patientIdError, _nomError, _prenomError, _telephoneError, _motDePasseError, _confirmMotDePasseError, _nomDocteurError].contains(true)) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Tous les champs sont obligatoires")),
       );
@@ -68,8 +68,8 @@ class _SignupPage2State extends State<SignupPage2> {
       'prenom': prenomController.text.trim(),
       'telephone': telephoneController.text.trim(),
       'motDePasse': motDePasse,
+      'doctorName': nomDocteurController.text.trim(),
     };
-
     // Appel de l'API pour enregistrer le patient
     final response = await patientService.createPatient(newPatient);
 
@@ -136,6 +136,11 @@ class _SignupPage2State extends State<SignupPage2> {
                 label: "Téléphone",
                 controller: telephoneController,
                 hasError: _telephoneError,
+              ),
+              inputFile(
+                label: "Nom docteur",
+                controller: nomDocteurController,
+                hasError: _nomDocteurError,
               ),
               inputFile(
                 label: "Mot de passe",
