@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:front/ProfilePage.dart';
+import 'package:front/signup.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:flutter/services.dart';
-import 'ProfilePage.dart';
-import 'signup.dart';
+
 
 class LoginPage extends StatefulWidget {
   @override
@@ -11,61 +12,40 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final nameController = TextEditingController();
-  final passwordController = TextEditingController();
+  final TextEditingController _nomController = TextEditingController();
+  final TextEditingController _motDePasseController = TextEditingController();
 
-  @override
-  void dispose() {
-    nameController.dispose();
-    passwordController.dispose();
-    super.dispose();
-  }
-
-  Future<void> login() async {
-    var name = nameController.text;
-    var password = passwordController.text;
-
-    if (name.isEmpty || password.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Veuillez remplir tous les champs')),
-      );
-      return;
-    }
-
-    var url = Uri.parse('http://localhost:8080/api/doctors/checkLogin');
-    var response = await http.post(
-      url,
-      headers: {
+  Future<void> login(String nom, String motDePasse) async {
+    const url = 'http://localhost:8080/api/doctors/checkLogin';
+    final response = await http.post(
+      Uri.parse(url),
+      headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: jsonEncode({
-        'nom': name,
-        'motDePasse': password,
+      body: jsonEncode(<String, String>{
+        'nom': nom,
+        'motDePasse': motDePasse,
       }),
     );
 
     if (response.statusCode == 200) {
-      var data = json.decode(response.body);
-      if (data['exists']) {
-        var token = data['token'];
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Bienvenue!")),
-        );
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ProfilePage(token: token),
-          ),
-        );
-      }
-    } else if (response.statusCode == 401) {
-      var data = json.decode(response.body);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(data['message'])),
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => ProfilePage()),
       );
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Erreur du serveur. Veuillez réessayer plus tard.")),
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Erreur de connexion'),
+          content: Text('Nom d\'utilisateur ou mot de passe incorrect.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('OK'),
+            ),
+          ],
+        ),
       );
     }
   }
@@ -90,103 +70,104 @@ class _LoginPageState extends State<LoginPage> {
         ),
         systemOverlayStyle: SystemUiOverlayStyle.dark,
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 40),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              SizedBox(height: 20),
-              Center(
-                child: Column(
-                  children: <Widget>[
-                    Text(
-                      "Médecin",
-                      style: TextStyle(
-                        fontSize: 30,
-                        fontWeight: FontWeight.bold,
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 40),
+              width: double.infinity,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Column(
+                    children: <Widget>[
+                      const Text(
+                        "Médecin",
+                        style: TextStyle(
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 20),
-                    Container(
-                      height: MediaQuery.of(context).size.height / 3,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage("lib/assets/doctors.PNG"),
+                      SizedBox(height: 20),
+                      Container(
+                        height: constraints.maxHeight / 3,
+                        decoration: const BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage("lib/assets/doctors.PNG"),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 20),
+                  inputFile(label: "Nom", controller: _nomController),
+                  SizedBox(height: 10),
+                  inputFile(label: "Mot de passe", obscureText: true, controller: _motDePasseController),
+                  SizedBox(height: 20),
+                  Container(
+                    width: constraints.maxWidth,
+                    child: MaterialButton(
+                      onPressed: () {
+                        login(_nomController.text, _motDePasseController.text);
+                      },
+                      color: Color(0xff0095FF),
+                      padding: EdgeInsets.symmetric(vertical: 15),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      child: Text(
+                        "Se connecter",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 20),
-              inputFile(
-                label: "Nom",
-                controller: nameController,
-              ),
-              SizedBox(height: 10),
-              inputFile(
-                label: "Mot de passe",
-                controller: passwordController,
-                obscureText: true,
-              ),
-              SizedBox(height: 20),
-              Container(
-                width: MediaQuery.of(context).size.width,
-                child: MaterialButton(
-                  onPressed: login,
-                  color: Color(0xff0095FF),
-                  padding: EdgeInsets.symmetric(vertical: 15),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
                   ),
-                  child: Text(
-                    "Se connecter",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    "Vous n'avez pas un compte?",
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  SizedBox(width: 5),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => SignupPage()),
-                      );
-                    },
-                    child: Text(
-                      "Créer un compte",
-                      style: TextStyle(
-                        color: Color(0xff0095FF),
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
+                  SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Expanded(
+                        child: Text(
+                          "Vous n'avez pas un compte?",
+                          style: TextStyle(fontSize: 16),
+                          textAlign: TextAlign.end,
+                        ),
                       ),
-                    ),
+                      SizedBox(width: 5),
+                      Expanded(
+                        child: TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => SignupPage()),
+                            );
+                          },
+                          child: Text(
+                            "Créer un compte",
+                            style: TextStyle(
+                              color: Color(0xff0095FF),
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-              SizedBox(height: 20),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
     );
   }
 }
 
-Widget inputFile({required String label, TextEditingController? controller, bool obscureText = false}) {
+Widget inputFile({label, obscureText = false, TextEditingController? controller}) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: <Widget>[
@@ -200,8 +181,8 @@ Widget inputFile({required String label, TextEditingController? controller, bool
       ),
       SizedBox(height: 5),
       TextField(
-        controller: controller,
         obscureText: obscureText,
+        controller: controller,
         decoration: InputDecoration(
           contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
           border: OutlineInputBorder(

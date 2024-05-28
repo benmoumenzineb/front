@@ -88,7 +88,7 @@ class _LoginPage2State extends State<LoginPage2> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 40),
+          padding: EdgeInsets.symmetric(horizontal: 20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
@@ -143,11 +143,18 @@ class _LoginPage2State extends State<LoginPage2> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Text(
-                    "Vous n'avez pas un compte?",
-                    style: TextStyle(fontSize: 16),
+                  Flexible(
+                    child: Text(
+                      "Vous n'avez pas un compte?",
+                      style: TextStyle(fontSize: 16),
+                      textAlign: TextAlign.center,
+                    ),
                   ),
-                  SizedBox(width: 5),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
                   TextButton(
                     onPressed: () {
                       Navigator.push(

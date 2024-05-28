@@ -184,13 +184,13 @@ Widget inputFile({
     children: <Widget>[
       Text(
         label,
-        style: TextStyle(
+        style: const TextStyle(
           fontSize: 15,
           fontWeight: FontWeight.w400,
           color: Colors.black87,
         ),
       ),
-      SizedBox(height: 5),
+      const SizedBox(height: 5),
       TextField(
         controller: controller,
         obscureText: obscureText,
@@ -198,19 +198,19 @@ Widget inputFile({
           suffixIcon: isPasswordField
               ? IconButton(
             onPressed: toggleObscureText,
-            icon: obscureText ? Icon(Icons.remove_red_eye) : Icon(Icons.visibility_off),
+            icon: obscureText ? const Icon(Icons.remove_red_eye) : Icon(Icons.visibility_off),
           )
               : null,
-          contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+          contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
           enabledBorder: OutlineInputBorder(
-            borderSide: hasError ? BorderSide(color: Colors.red) : BorderSide(),
+            borderSide: hasError ? const BorderSide(color: Colors.red) : const BorderSide(),
           ),
           border: OutlineInputBorder(
-            borderSide: hasError ? BorderSide(color: Colors.red) : BorderSide(),
+            borderSide: hasError ? const BorderSide(color: Colors.red) : const BorderSide(),
           ),
         ),
       ),
-      SizedBox(height: 10),
+      const SizedBox(height: 10),
     ],
   );
 }

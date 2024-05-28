@@ -7,20 +7,25 @@ import 'package:front/ComptePatient.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:fl_chart/fl_chart.dart';
+
 class GlucoseDataPoint {
   final DateTime dateTime;
   final double glucoseLevel;
 
   GlucoseDataPoint(this.dateTime, this.glucoseLevel);
 }
+
 class GlucoseDashboard extends StatefulWidget {
   const GlucoseDashboard({Key? key}) : super(key: key);
+
   @override
   _GlucoseDashboardState createState() => _GlucoseDashboardState();
 }
+
 class _GlucoseDashboardState extends State<GlucoseDashboard> {
   List<GlucoseDataPoint> glucoseData = [];
   bool showDetails = false;
+
   @override
   void initState() {
     super.initState();
@@ -32,6 +37,7 @@ class _GlucoseDashboardState extends State<GlucoseDashboard> {
       print("Erreur lors de la récupération des données de glucose: $error");
     });
   }
+
   Future<List<GlucoseDataPoint>> fetchDataFromAPI() async {
     var url = Uri.parse('http://localhost:8080/api/current?patientId=1');
     final response = await http.get(url);
@@ -51,6 +57,7 @@ class _GlucoseDashboardState extends State<GlucoseDashboard> {
       throw Exception("Failed to fetch glucose data");
     }
   }
+
   Color getColorForGlucoseLevel(double glucoseLevel) {
     if (glucoseLevel > 1.10) {
       return Colors.red;
@@ -58,6 +65,16 @@ class _GlucoseDashboardState extends State<GlucoseDashboard> {
       return Colors.green;
     } else {
       return Colors.yellow;
+    }
+  }
+
+  String getGlucoseLevelMessage(double glucoseLevel) {
+    if (glucoseLevel > 1.10) {
+      return "Hyperglycémie";
+    } else if (glucoseLevel < 0.7) {
+      return "Hypoglycémie";
+    } else {
+      return "Glycémie normale";
     }
   }
 
@@ -196,7 +213,9 @@ class _GlucoseDashboardState extends State<GlucoseDashboard> {
                       )).toList(),
                       isCurved: true,
                       barWidth: 4,
-                      colors: glucoseData.map((dataPoint) => getColorForGlucoseLevel(dataPoint.glucoseLevel)).toList(),
+                      colors: glucoseData
+                          .map((dataPoint) => getColorForGlucoseLevel(dataPoint.glucoseLevel))
+                          .toList(),
                     ),
                   ],
                   minX: glucoseData.first.dateTime.millisecondsSinceEpoch.toDouble(),
@@ -253,9 +272,16 @@ class _GlucoseDashboardState extends State<GlucoseDashboard> {
                     final formattedDate = "${data.dateTime.day}/${data.dateTime.month}/${data.dateTime.year}";
                     final formattedTime = "${data.dateTime.hour}:${data.dateTime.minute}";
 
+                    final color = getColorForGlucoseLevel(data.glucoseLevel);
+                    final message = getGlucoseLevelMessage(data.glucoseLevel);
+
                     return ListTile(
                       title: Text("Niveau de glycémie : ${data.glucoseLevel}"),
                       subtitle: Text("Date : $formattedDate | Heure : $formattedTime"),
+                      trailing: Text(
+                        message,
+                        style: TextStyle(color: color),
+                      ),
                     );
                   },
                 ),
@@ -266,5 +292,3 @@ class _GlucoseDashboardState extends State<GlucoseDashboard> {
     );
   }
 }
-
-

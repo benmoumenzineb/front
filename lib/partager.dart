@@ -19,12 +19,10 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
 class SocialMediaPage extends StatelessWidget {
   final String facebookUrl = "https://www.facebook.com/yourprofile";
   final String instagramUrl = "https://www.instagram.com/yourprofile";
   final String whatsappUrl = "https://wa.me/1234567890";
-
   void _launchURL(String url) async {
     if (await canLaunch(url)) {
       await launch(url);
@@ -32,7 +30,6 @@ class SocialMediaPage extends StatelessWidget {
       throw 'Could not launch $url';
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,16 +42,17 @@ class SocialMediaPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              "partagez vos mesures sur les réseaux sociaux!",
+              "Partagez vos mesures sur les réseaux sociaux!",
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 20),
             Expanded(
               child: GridView.count(
-                crossAxisCount: 3,
+                crossAxisCount: 2, // Ajuster à 2 pour mieux s'adapter aux petits écrans
                 mainAxisSpacing: 20, // Espacement entre les lignes
                 crossAxisSpacing: 20, // Espacement entre les colonnes
+                childAspectRatio: 3 / 2, // Ajuster l'aspect pour mieux s'adapter à la taille des écrans
                 children: [
                   _socialMediaCard(
                     context,
@@ -104,6 +102,7 @@ class SocialMediaPage extends StatelessWidget {
             Text(
               label,
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
             ),
           ],
         ),
